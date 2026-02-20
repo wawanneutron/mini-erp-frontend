@@ -81,7 +81,7 @@ const route = useRoute()
 
 const logout = () => {
   authStore.logout()
-  router.push('/login')
+  router.push('/')
 }
 
 const pageTitle = computed(() => {

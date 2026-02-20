@@ -10,7 +10,7 @@ import ReportsPage from '@/pages/Reports.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     component: LoginPage,
   },
   {
@@ -49,8 +49,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
 
-  if (!auth.token && to.path !== '/login') {
-    return next('/login')
+  if (!auth.token && to.path !== '/') {
+    return next('/')
   }
 
   if (to.meta.role && auth.user?.role !== to.meta.role) {
