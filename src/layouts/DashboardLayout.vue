@@ -2,7 +2,10 @@
   <div class="min-h-screen flex bg-gray-100">
     <aside class="w-64 bg-gray-900 text-white flex flex-col justify-between">
       <div>
-        <div class="p-6 text-2xl font-bold border-b border-gray-800">MyApp</div>
+        <div class="p-6 border-b border-gray-800">
+          <h2 class="text-2xl font-bold">Mini ERP</h2>
+          <p class="text-sm">Dashboard</p>
+        </div>
 
         <nav class="p-4 space-y-2">
           <RouterLink
