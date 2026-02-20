@@ -45,7 +45,7 @@
       <div class="p-4 border-t border-gray-800">
         <button
           @click="logout"
-          class="w-full bg-red-500 hover:bg-red-600 py-2 rounded-lg transition"
+          class="w-full bg-gray-700 hover:bg-gray-400 hover:text-gray-900 py-2 rounded-lg transition"
         >
           Logout
         </button>
