@@ -67,22 +67,22 @@
         <router-view />
       </main>
     </div>
+
+    <LogoutModal v-model="isOpenLogout" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import LogoutModal from '@/components/LogoutModal.vue'
 
 const authStore = useAuthStore()
-const router = useRouter()
 const route = useRoute()
+const isOpenLogout = ref(false)
 
-const logout = () => {
-  authStore.logout()
-  router.push('/')
-}
+const logout = () => (isOpenLogout.value = true)
 
 const pageTitle = computed(() => {
   return route.name?.toString() || 'Dashboard'
