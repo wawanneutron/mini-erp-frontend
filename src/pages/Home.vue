@@ -11,7 +11,7 @@
       <div class="bg-white p-6 rounded-2xl shadow">
         <p class="text-gray-500">Total Transactions</p>
         <h2 class="text-3xl font-bold mt-2">
-          {{ totalTransactions }}
+          {{ totalTransaction }}
         </h2>
       </div>
 
@@ -24,30 +24,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useProductStore } from '@/stores/product'
-import { useTransactionStore } from '@/stores/transaction'
+import { useStatisticStore } from '@/stores/statistic'
 import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
 
-const productStore = useProductStore()
-const transactionStore = useTransactionStore()
-
-const { fetchProducts } = productStore
-const { fetchTransactions } = transactionStore
-
-const { products } = storeToRefs(productStore)
-const { transactions } = storeToRefs(transactionStore)
-
-const totalProducts = computed(() => products.value.length)
-
-const totalTransactions = computed(() => transactions.value.length)
-
-const totalRevenue = computed(() =>
-  transactions.value.reduce((sum: number, trx: any) => sum + Number(trx.total || 0), 0),
-)
+const statisticSummaryStore = useStatisticStore()
+const { fetchStatisticSummary } = statisticSummaryStore
+const { totalProducts, totalTransaction, totalRevenue } = storeToRefs(statisticSummaryStore)
 
 onMounted(async () => {
-  await fetchTransactions()
-  await fetchProducts()
+  await fetchStatisticSummary()
 })
 </script>
