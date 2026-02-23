@@ -25,6 +25,7 @@ export interface User {
   tenant: Tenant
 }
 
-export interface AuthLogin extends User {
+export interface AuthLogin {
+  user: User
   token: string
 }

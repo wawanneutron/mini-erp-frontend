@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { ApiResponse } from '@/types'
 import api from '@/api/axios'
+import { useSnackbarStore } from './ui/snackbar'
 
 interface ReportData {
   total_transactions: number
@@ -15,6 +16,9 @@ export const useReportStore = defineStore('report', () => {
   const loading = ref(false)
   const error = ref<string>('')
 
+  const snackbarStore = useSnackbarStore()
+  const { showSnackbar } = snackbarStore
+
   const fetchReportTransaction = async (start_date: string, end_date: string) => {
     loading.value = true
     error.value = ''
@@ -25,8 +29,18 @@ export const useReportStore = defineStore('report', () => {
       })
 
       transactions.value = res.data.data
+
+      showSnackbar({
+        message: res.data.message,
+        type: 'success',
+      })
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch report'
+
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }

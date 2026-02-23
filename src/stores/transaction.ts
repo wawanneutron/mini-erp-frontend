@@ -2,7 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/api/axios'
 import type { Transaction } from '@/types/transaction'
-import type { PaginatedResponse, PaginationMeta } from '@/types'
+import type { ApiResponse, PaginatedResponse, PaginationMeta } from '@/types'
+import { useSnackbarStore } from './ui/snackbar'
 
 export const useTransactionStore = defineStore('transaction', () => {
   const transactions = ref<Transaction[]>([])
@@ -10,6 +11,9 @@ export const useTransactionStore = defineStore('transaction', () => {
 
   const loading = ref(false)
   const error = ref<string>('')
+
+  const snackbarStore = useSnackbarStore()
+  const { showSnackbar } = snackbarStore
 
   const fetchTransactions = async (page: number = 1) => {
     loading.value = true
@@ -37,10 +41,21 @@ export const useTransactionStore = defineStore('transaction', () => {
     error.value = ''
 
     try {
-      const res = await api.post<Transaction>('/transactions', payload)
+      const res = await api.post<ApiResponse<Transaction>>('/transactions', payload)
+
+      showSnackbar({
+        message: res.data.message,
+        type: 'success',
+      })
+
       return res.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Create transaction failed'
+
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }

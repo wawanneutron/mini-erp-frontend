@@ -2,7 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/api/axios'
 import type { Product } from '@/types/product'
-import type { PaginatedResponse, PaginationMeta } from '@/types'
+import type { ApiResponse, PaginatedResponse, PaginationMeta } from '@/types'
+import { useSnackbarStore } from './ui/snackbar'
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<Product[]>([])
@@ -10,6 +11,9 @@ export const useProductStore = defineStore('product', () => {
   const selectedProduct = ref<Product | null>(null)
   const loading = ref(false)
   const error = ref<string>('')
+
+  const snackbarStore = useSnackbarStore()
+  const { showSnackbar } = snackbarStore
 
   const fetchProducts = async (page: number = 1) => {
     loading.value = true
@@ -27,6 +31,10 @@ export const useProductStore = defineStore('product', () => {
       pagination.value = res.data.meta
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch products'
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -41,6 +49,10 @@ export const useProductStore = defineStore('product', () => {
       selectedProduct.value = res.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch detail'
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -51,11 +63,19 @@ export const useProductStore = defineStore('product', () => {
     error.value = ''
 
     try {
-      const res = await api.post<Product>('/products', payload)
-      products.value.unshift(res.data)
+      const res = await api.post<ApiResponse<Product>>('/products', payload)
+      products.value.unshift(res.data.data)
+      showSnackbar({
+        message: res.data.message,
+        type: 'success',
+      })
       return res.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Create failed'
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -66,16 +86,25 @@ export const useProductStore = defineStore('product', () => {
     error.value = ''
 
     try {
-      const res = await api.put<Product>(`/products/${id}`, payload)
+      const res = await api.put<ApiResponse<Product>>(`/products/${id}`, payload)
 
       const index = products.value.findIndex((p) => p.id === id)
       if (index !== -1) {
-        products.value[index] = res.data
+        products.value[index] = res.data.data
       }
+
+      showSnackbar({
+        message: res.data.message,
+        type: 'success',
+      })
 
       return res.data
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Update failed'
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }
@@ -86,10 +115,19 @@ export const useProductStore = defineStore('product', () => {
     error.value = ''
 
     try {
-      await api.delete(`/products/${id}`)
+      const res = await api.delete<ApiResponse<any>>(`/products/${id}`)
       products.value = products.value.filter((p) => p.id !== id)
+
+      showSnackbar({
+        message: res.data.message,
+        type: 'success',
+      })
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Delete failed'
+      showSnackbar({
+        message: error.value,
+        type: 'error',
+      })
     } finally {
       loading.value = false
     }
