@@ -19,7 +19,7 @@
       </template>
 
       <template #created_at="{ item }">
-        {{ formatDate(item.created_at) }}
+        {{ formatDateTime(item.created_at) }}
       </template>
 
       <template #action="{ item }">
@@ -43,6 +43,7 @@ import CreateTransactionModal from '@/components/CreateTransactionModal.vue'
 import TransactionDetailModal from '@/components/TransactionDetailModal.vue'
 import { storeToRefs } from 'pinia'
 import type { Transaction } from '@/types/transaction'
+import { formatDateTime } from '@/utils/date'
 
 const transactionStore = useTransactionStore()
 const { fetchTransactions } = transactionStore
@@ -77,10 +78,6 @@ const goToDetail = (id: number) => {
 
 const formatCurrency = (value: number | string) => {
   return Number(value).toLocaleString('id-ID')
-}
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('id-ID')
 }
 
 onMounted(async () => {
